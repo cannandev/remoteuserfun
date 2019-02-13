@@ -6,8 +6,10 @@ const url = 'https://randomuser.me/api/?results=4&?nat=us,dk,fr,gb' // get 4 ran
 
  // Function to toggle expandables
  const toggler = e => {
-  console.log(e.currentTarget)
-  e.currentTarget.parent.classList.toggle('is-open')
+    if (e.target.closest('.accordion__drawer')) {
+      e.target.closest('.accordion__drawer').classList.toggle('is-open')
+    }
+    // currentTarget? I need drawer, not profile
 }
 
  // Function to add a CSS class and append to another element (two params)
