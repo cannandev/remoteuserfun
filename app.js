@@ -4,20 +4,21 @@
 const accordion = document.querySelector('.accordion')
 const url = 'https://randomuser.me/api/?results=4&?nat=us,dk,fr,gb' // get 4 random users
 
- // Function to toggle expandables
- const toggler = e => {
-    if (e.target.matches('.accordion__profile')) {
-      e.target.parentElement.classList.toggle('is-open')
-      // but now clicking on child elements (button, img, name, etc.) won't open .accordion__contact
-    }
+// Function to toggle expandables.
+// Give large click area, not just arrows.
+const toggler = e => {
+  if (e.target.matches('.accordion__profile')) {
+    e.target.parentElement.classList.toggle('is-open')
+    // ? But now clicking on child elements (button, img, name, etc.) won't open .accordion__contact!!!
+  }
 }
 
- // Function to add a CSS class 
+ // Function to add a CSS class.
  const addClass = (elem, className) => {
   elem.classList.add(className)
  }
 
- // Function to append multiple elements to a parent
+ // Function to append multiple elements to a parent.
  const appender = (parent, elemArray) => {
    elemArray.forEach(elem => parent.appendChild(elem))
  }
@@ -28,12 +29,13 @@ fetch(url)
     // create and append the profile details
     let profiles = data.results
     return profiles.map(function(profile) {
+      // ? Is this best practice?
       let drawer = document.createElement('div'),
           profileContainer = document.createElement('div'),
           contactContainer = document.createElement('div'),
           profileInfo = document.createElement('h2'),
           img = document.createElement('img'),
-          name = document.createElement('strong'),
+          name = `<strong class="profile__name>${profile.name.first} ${profile.name.last}</strong>`,
           date = document.createElement('span'),
           location = document.createElement('span'),
           phoneInfo = document.createElement('div'),
@@ -44,8 +46,8 @@ fetch(url)
       img.src = profile.picture.medium
       
       // Get the profile name
-      addClass(name, 'profile__name')
-      name.innerHTML = `${profile.name.first} ${profile.name.last}`
+      // addClass(name, 'profile__name')
+      // name.innerHTML = `${profile.name.first} ${profile.name.last}`
       
       // Convert the dob to a date object. Get only the year.
       let year = new Date(profile.dob.date)
@@ -58,10 +60,12 @@ fetch(url)
 
       // Add all profileInfo content (h2)
       addClass(profileInfo, 'profile__info')
+      console.log(name)
+      profileInfo.appendChild(name)
       appender(profileInfo, [name, date, location])
 
       // Clone the existing element. 
-      // @TODO: Need to remove hidden markup.
+      // ? Is this the best way? svgs are a lot of code for transliterals
       let button = document.querySelector('.accordion__indicator.is-hidden')
       let indicator = button.cloneNode(true)
       indicator.classList.remove('is-hidden')
@@ -90,8 +94,8 @@ fetch(url)
     })
   })
   .then(function(res) {
-    // Toggle each accordion. Give large click area, not just arrows.
-    // Use event delegation to add listener to parent (.accordion), listen for clicked child (.accordion__profile).
+    // Toggle each accordion.
+    // Use event delegation to add listener to parent (.accordion).
     accordion.addEventListener('click', toggler)
   })
   .catch(function(error) {
